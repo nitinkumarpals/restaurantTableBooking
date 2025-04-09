@@ -1,0 +1,11 @@
+node_modules/
+npm-debug.log
+package-lock.json
+.env
+config/*.js
+logs/
+coverage/
+*.log
+*.tmp
+*.seed
+.DS_Store
