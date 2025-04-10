@@ -120,7 +120,7 @@ export const reserveTable = async (req: AuthRequest, res: Response) => {
           <p>Time: ${time}</p>
           <p>Guests: ${guests}</p>
         `
-      ).catch(console.error); // Log any email sending errors but don't affect the response
+      ).catch(console.error); 
     }
 
     res.status(201).json({

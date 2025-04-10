@@ -5,11 +5,18 @@ import authRoutes from "./routes/auth.routes";
 import restaurantRoutes from "./routes/restaurant.routes";
 import reservationRoutes from "./routes/reservation.routes";
 import { prisma } from "./config/db";
+import rateLimit from "express-rate-limit";
 const app = express();
 const PORT = process.env.PORT || 4000;
 console.log(process.env.PORT);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+
 // Middlewares
 app.use(express.json());
+app.use(limiter);
 
 // Health check endpoint
 app.get('/health', async (req: Request, res: Response) => {
