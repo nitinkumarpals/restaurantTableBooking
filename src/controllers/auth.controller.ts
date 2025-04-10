@@ -21,7 +21,7 @@ export const register = async (req: Request, res: Response) => {
     const user = await prisma.user.create({
       data: { email, password: hashedPassword, name },
     });
-    res.status(201).json({ token: generateToken(user.id,user.email) });
+    res.status(201).json({ message: 'Registration successful', token: generateToken(user.id,user.email) });
     return;
   } catch (error) {
     console.error('Registration error:', error);
@@ -60,7 +60,7 @@ export const login = async (req: Request, res: Response) => {
       });
       return;
     }
-    res.status(200).json({ token: generateToken(user.id,user.email) });
+    res.status(200).json({ message: 'Login successful', token: generateToken(user.id,user.email) });
     return;
   } catch (error) {
     console.error('Login error:', error);

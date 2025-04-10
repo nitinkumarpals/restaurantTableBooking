@@ -7,8 +7,8 @@ export const getRestaurants = async (req: Request, res: Response) => {
     res.json(restaurants);
     return;
   } catch (error) {
-    console.error('Get restaurants error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Get restaurants error:", error);
+    res.status(500).json({ error: "Internal server error" });
     return;
   }
 };
