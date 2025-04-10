@@ -184,6 +184,13 @@ export const cancelReservation = async (req: Request, res: Response) => {
     }
 
     const { id } = parsedParams.data;
+    const availableReservation = await prisma.reservation.findUnique({
+      where: { id },
+    });
+    if (!availableReservation) {
+      res.status(404).json({ error: "Reservation not found" });
+      return;
+    }
     const reservation = await prisma.reservation.delete({ where: { id } });
 
     if (!reservation) {
