@@ -6,6 +6,7 @@ import restaurantRoutes from "./routes/restaurant.routes";
 import reservationRoutes from "./routes/reservation.routes";
 import { prisma } from "./config/db";
 import rateLimit from "express-rate-limit";
+import cors from "cors";
 const app = express();
 const PORT = process.env.PORT || 4000;
 console.log(process.env.PORT);
@@ -13,6 +14,18 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100 // limit each IP to 100 requests per windowMs
 });
+
+const corsOptions = {
+  origin: [
+    '[https://nitinpaldev.xyz](https://nitinpaldev.xyz)',
+    'http://localhost:3000' // for development
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+app.use(cors(corsOptions));
 
 // Middlewares
 app.use(express.json());
