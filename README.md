@@ -2,7 +2,7 @@
 
 **Assignment:** *We Write Code — Restaurant Table Booking Backend*  
 **Submitted by:** Nitin Pal  
-**Repo:** [restaurantTableBooking](https://github.com/nitinkumarpals/restaurantTableBooking)
+**Link:** [restaurantTableBooking](https://nitinpaldev.xyz/health)
 
 ---
 
