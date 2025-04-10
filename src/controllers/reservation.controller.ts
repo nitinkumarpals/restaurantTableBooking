@@ -8,7 +8,8 @@ export const reserveTable = async (req: AuthRequest, res: Response) => {
   try {
     const parsedBody = createReservationSchema.safeParse(req.body);
     if (!parsedBody.success) {
-      return res.status(400).json({ error: parsedBody.error.message });
+      res.status(400).json({ error: parsedBody.error.message });
+      return;
     }
 
     const { restaurantId, date, time, guests, restaurantName } = parsedBody.data;
@@ -36,9 +37,11 @@ export const reserveTable = async (req: AuthRequest, res: Response) => {
     );
 
     res.status(201).json(reservation);
+    return;
   } catch (error) {
     console.error('Reservation error:', error);
     res.status(500).json({ error: 'Internal server error' });
+    return;
   }
 };
 
@@ -47,9 +50,11 @@ export const getUserReservations = async (req: Request, res: Response) => {
     const userId = (req.user as any).userId;
     const reservations = await prisma.reservation.findMany({ where: { userId } });
     res.json(reservations);
+    return;
   } catch (error) {
     console.error('Get reservations error:', error);
     res.status(500).json({ error: 'Internal server error' });
+    return;
   }
 };
 
@@ -57,7 +62,8 @@ export const cancelReservation = async (req: Request, res: Response) => {
   try {
     const parsedParams = cancelReservationSchema.safeParse(req.params);
     if (!parsedParams.success) {
-      return res.status(400).json({ error: parsedParams.error.message });
+      res.status(400).json({ error: parsedParams.error.message });
+      return;
     }
 
     const { id } = parsedParams.data;
@@ -73,8 +79,10 @@ export const cancelReservation = async (req: Request, res: Response) => {
     );
 
     res.status(204).send();
+    return;
   } catch (error) {
     console.error('Cancel reservation error:', error);
     res.status(500).json({ error: 'Internal server error' });
+    return;
   }
 };

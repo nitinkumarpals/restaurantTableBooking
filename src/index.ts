@@ -11,13 +11,15 @@ console.log(process.env.PORT);
 app.use(express.json());
 
 // Routes
+app.use("/auth", authRoutes);
+app.use("/restaurants", restaurantRoutes);
+app.use("/reservations", reservationRoutes);
+
+// Root route (should be last)
 app.use("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Hello, world!" });
 });
 
-app.use("/auth", authRoutes);
-app.use("/restaurants", restaurantRoutes);
-app.use("/reservations", reservationRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
