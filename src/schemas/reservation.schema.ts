@@ -4,7 +4,7 @@ export const createReservationSchema = z.object({
   restaurantId: z.string(),
   date: z.string(),
   time: z.string(),
-  guests: z.number().int().positive(),
+  guests: z.number().int().positive().min(1, "Guests must be at least 1"),
   restaurantName: z.string(),
 });
 

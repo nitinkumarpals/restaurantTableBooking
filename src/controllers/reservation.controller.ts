@@ -22,7 +22,7 @@ export const reserveTable = async (req: AuthRequest, res: Response) => {
       parsedBody.data;
     const userId = (req.user as any).userId;
     const userEmail = (req.user as any).email;
-    
+
     // Get restaurant details including capacity
     const restaurant = await prisma.restaurant.findUnique({
       where: { id: restaurantId },
@@ -109,17 +109,19 @@ export const reserveTable = async (req: AuthRequest, res: Response) => {
       });
       return;
     }
-    await sendEmail(
-      userEmail,
-      "Reservation Confirmation",
-      `
-        <h2>Reservation Confirmed</h2>
-        <p>Your table has been reserved at ${restaurantName}</p>
-        <p>Date: ${date}</p>
-        <p>Time: ${time}</p>
-        <p>Guests: ${guests}</p>
-      `
-    );
+    if (userEmail) {
+      sendEmail(
+        userEmail,
+        "Reservation Confirmation",
+        `
+          <h2>Reservation Confirmed</h2>
+          <p>Your table has been reserved at ${restaurantName}</p>
+          <p>Date: ${date}</p>
+          <p>Time: ${time}</p>
+          <p>Guests: ${guests}</p>
+        `
+      ).catch(console.error); // Log any email sending errors but don't affect the response
+    }
 
     res.status(201).json({
       message: "Reservation created successfully",
@@ -182,16 +184,25 @@ export const cancelReservation = async (req: Request, res: Response) => {
     }
 
     const { id } = parsedParams.data;
-    await prisma.reservation.delete({ where: { id } });
+    const reservation = await prisma.reservation.delete({ where: { id } });
 
-    await sendEmail(
-      (req.user as any).email,
-      "Reservation Cancellation",
-      `
-        <h2>Reservation Cancelled</h2>
-        <p>Your reservation has been cancelled.</p>
-      `
-    );
+    if (!reservation) {
+      res.status(404).json({ error: "Reservation not found" });
+      return;
+    }
+    if (reservation) {
+      const userEmail = (req.user as any).email;
+      if (userEmail) {
+        sendEmail(
+          userEmail,
+          "Reservation Cancellation",
+          `
+            <h2>Reservation Cancelled</h2>
+            <p>Your reservation has been cancelled.</p>
+          `
+        ).catch(console.error);
+      }
+    }
 
     res.status(204).send();
     return;
