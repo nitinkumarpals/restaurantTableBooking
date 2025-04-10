@@ -8,24 +8,33 @@ export const reserveTable = async (req: AuthRequest, res: Response) => {
   try {
     const parsedBody = createReservationSchema.safeParse(req.body);
     if (!parsedBody.success) {
-      res.status(400).json({ error: parsedBody.error.message });
+      res.status(400).json({ 
+        error: 'Invalid request',
+        details: parsedBody.error.message 
+      });
       return;
     }
 
     const { restaurantId, date, time, guests, restaurantName } = parsedBody.data;
-    
     const reservation = await prisma.reservation.create({
       data: { 
         restaurantId,
         userId: (req.user as any).userId,
         date: new Date(date),
-        time,
+        time: time,
         guests
       },
     });
-
+    const userEmail = (req.user as any).email;
+    if (!userEmail) {
+      res.status(500).json({ 
+        error: 'Failed to send email',
+        details: 'User email not found' 
+      });
+      return;
+    }
     await sendEmail(
-      req.email!,
+      userEmail,
       'Reservation Confirmation',
       `
         <h2>Reservation Confirmed</h2>
@@ -36,11 +45,21 @@ export const reserveTable = async (req: AuthRequest, res: Response) => {
       `
     );
 
-    res.status(201).json(reservation);
+    res.status(201).json({message:"Reservation created successfully",reservation});
     return;
   } catch (error) {
     console.error('Reservation error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (error instanceof Error) {
+      res.status(500).json({ 
+        error: 'Failed to create reservation',
+        details: error.message 
+      });
+      return;
+    }
+    res.status(500).json({ 
+      error: 'Failed to create reservation',
+      details: 'An unexpected error occurred' 
+    });
     return;
   }
 };
@@ -50,10 +69,19 @@ export const getUserReservations = async (req: Request, res: Response) => {
     const userId = (req.user as any).userId;
     const reservations = await prisma.reservation.findMany({ where: { userId } });
     res.json(reservations);
-    return;
   } catch (error) {
     console.error('Get reservations error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (error instanceof Error) {
+      res.status(500).json({ 
+        error: 'Failed to fetch reservations',
+        details: error.message 
+      });
+      return;
+    }
+    res.status(500).json({ 
+      error: 'Failed to fetch reservations',
+      details: 'An unexpected error occurred' 
+    });
     return;
   }
 };
@@ -62,7 +90,10 @@ export const cancelReservation = async (req: Request, res: Response) => {
   try {
     const parsedParams = cancelReservationSchema.safeParse(req.params);
     if (!parsedParams.success) {
-      res.status(400).json({ error: parsedParams.error.message });
+      res.status(400).json({ 
+        error: 'Invalid request',
+        details: parsedParams.error.message 
+      });
       return;
     }
 
@@ -82,7 +113,17 @@ export const cancelReservation = async (req: Request, res: Response) => {
     return;
   } catch (error) {
     console.error('Cancel reservation error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (error instanceof Error) {
+      res.status(500).json({ 
+        error: 'Failed to cancel reservation',
+        details: error.message 
+      });
+      return;
+    }
+    res.status(500).json({ 
+      error: 'Failed to cancel reservation',
+      details: 'An unexpected error occurred' 
+    });
     return;
   }
 };

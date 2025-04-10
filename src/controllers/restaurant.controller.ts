@@ -5,8 +5,10 @@ export const getRestaurants = async (req: Request, res: Response) => {
   try {
     const restaurants = await prisma.restaurant.findMany();
     res.json(restaurants);
+    return;
   } catch (error) {
     console.error('Get restaurants error:', error);
     res.status(500).json({ error: 'Internal server error' });
+    return;
   }
 };
