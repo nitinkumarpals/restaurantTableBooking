@@ -129,7 +129,7 @@ restaurantTableBooking/
 ## 📤 Submission
 
 - **Repository Link:** [https://github.com/nitinkumarpals/restaurantTableBooking](https://github.com/nitinkumarpals/restaurantTableBooking)
-- **Deployment:** [Add deployment link if hosted, e.g., Render/Railway]
+- **Deployment:** [Deployment: https://nitinpaldev.xyz](https://nitinpaldev.xyz)
 
 ---
 
